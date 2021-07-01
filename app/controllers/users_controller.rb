@@ -1,10 +1,15 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:login, :destroy]
+  before_action :set_user, only: [ :destroy ]
   
 
-  # GET /users/login/:id
+  # GET /users/login
   def login
-    render json: UserRepresenter.new(@user).as_json, status: :ok
+    @user = User.find_by_email(params[:email])
+    if @user.password == params[:password]
+      render json: UserRepresenter.new(@user).as_json, status: :created
+    else
+      render json: { errors: 'Incorrect Password'}, status: :unprocessable_entity
+    end
   end
 
   # POST /users
@@ -15,7 +20,7 @@ class UsersController < ApplicationController
     if @user.save
       render json: UserRepresenter.new(@user).as_json, status: :created
     else
-      render json: @user.errors, status: :unprocessable_entity
+      render json: { errors: @user.errors }, status: :unprocessable_entity
     end
   end
 
