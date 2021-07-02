@@ -3,14 +3,14 @@ class HousesController < ApplicationController
 
   # GET /houses
   def index
-    @houses = House.all
+    @houses = House.all.limit(params[:limit] || 10)
 
-    render json: @houses
+    render json: HouseRepresenter.new(@houses).houses_json, status: :ok
   end
 
   # GET /houses/1
   def show
-    render json: @house
+    render json: HouseRepresenter.new(@house).as_json, status: :ok
   end
 
   # POST /houses
@@ -18,9 +18,9 @@ class HousesController < ApplicationController
     @house = House.new(house_params)
 
     if @house.save
-      render json: @house, status: :created, location: @house
+      render json: HouseRepresenter.new(@house).as_json , status: :created, location: @house
     else
-      render json: @house.errors, status: :unprocessable_entity
+      render json: { erros: @house.errors }, status: :unprocessable_entity
     end
   end
 
@@ -29,7 +29,7 @@ class HousesController < ApplicationController
     if @house.update(house_params)
       render json: @house
     else
-      render json: @house.errors, status: :unprocessable_entity
+      render json: { errors: @house.errors }, status: :unprocessable_entity
     end
   end
 
@@ -46,6 +46,6 @@ class HousesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def house_params
-      params.require(:house).permit(:title, :address, :rent_price, :description, :user_id)
+      params.require(:house).permit(:title, :address, :rent_price, :description, :user_id, :reviews)
     end
 end
