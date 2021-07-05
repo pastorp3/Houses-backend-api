@@ -27,7 +27,7 @@ class HousesController < ApplicationController
   # PATCH/PUT /houses/1
   def update
     if @house.update(house_params)
-      render json: @house
+      render json: HouseRepresenter.new(@house).as_json, status: :ok
     else
       render json: { errors: @house.errors }, status: :unprocessable_entity
     end
