@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
-  resources :favorites
+  resources :favorites , only: [ :show, :create, :destroy]
+  get "favorites/user/:id", to: "favorites#index"
   resources :houses
   resources :users, only: [ :create, :destroy ]
   get "users/login", to: "users#login"

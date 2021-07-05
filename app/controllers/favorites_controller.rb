@@ -1,11 +1,12 @@
 class FavoritesController < ApplicationController
   before_action :set_favorite, only: [:show, :update, :destroy]
+  before_action :set_user, only: [:index]
 
   # GET /favorites
   def index
-    @favorites = Favorite.all
+    @favorites = @user.favorites
 
-    render json: @favorites
+    render json: FavoriteRepresenter.new(@favorites).as_json, status: :ok
   end
 
   # GET /favorites/1
@@ -42,6 +43,10 @@ class FavoritesController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_favorite
       @favorite = Favorite.find(params[:id])
+    end
+
+    def set_user
+      @user = User.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
